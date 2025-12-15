@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kartlegging av AI-bruksområder – Orkla Foods Kvalitet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #223500;
+            --primary-light: #3a5a00;
+            --white: #FFFFFF;
+            --gray-50: #fafafa;
+            --gray-100: #f5f5f5;
+            --gray-200: #e5e5e5;
+            --gray-300: #d4d4d4;
+            --gray-400: #a3a3a3;
+            --gray-500: #737373;
+            --gray-600: #525252;
+            --gray-700: #404040;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-700);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+            font-weight: 400;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--gray-500);
+            font-size: 1.1rem;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            border: 1px solid var(--gray-200);
+            background: var(--white);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            transition: all 0.2s ease;
+        }
+
+        .tab:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* Use Case Cards */
+        .use-cases-grid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .use-case-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .use-case-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .card-number {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .card-number.priority {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            position: relative;
+        }
+
+        .card-number.priority::after {
+            content: '★';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 14px;
+            color: #f59e0b;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            line-height: 1.4;
+        }
+
+        .card-summary {
+            color: var(--gray-600);
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            padding: 4px 12px;
+            background: var(--gray-100);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+
+        .tag.risk {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .card-details {
+            display: none;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .use-case-card.expanded .card-details {
+            display: block;
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+        }
+
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .assessment-box {
+            background: #F5EFEE;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-top: 20px;
+        }
+
+        .assessment-box .detail-label {
+            margin-bottom: 8px;
+        }
+
+        .assessment-box .detail-content {
+            color: var(--gray-600);
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .detail-content {
+            color: var(--gray-700);
+            font-size: 0.95rem;
+        }
+
+        .detail-content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .detail-content li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 6px;
+        }
+
+        .detail-content li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .expand-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 16px;
+            padding: 8px 16px;
+            background: var(--gray-100);
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .expand-btn:hover {
+            background: var(--gray-200);
+        }
+
+        .expand-btn svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.2s ease;
+        }
+
+        .use-case-card.expanded .expand-btn svg {
+            transform: rotate(180deg);
+        }
+
+        /* Priority Matrix */
+        .matrix-container {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+        }
+
+        .matrix-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .matrix-header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .matrix-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .matrix-legend {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .reset-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .reset-btn:hover {
+            background: var(--gray-100);
+            border-color: var(--gray-400);
+        }
+
+        .reset-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .matrix-wrapper {
+            display: flex;
+            gap: 24px;
+        }
+
+        .matrix-y-label {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+            padding-right: 8px;
+        }
+
+        .matrix-main {
+            flex: 1;
+        }
+
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 3px;
+            background: var(--gray-300);
+            border-radius: 12px;
+            overflow: hidden;
+            height: 600px;
+            position: relative;
+        }
+
+        .matrix-quadrant {
+            background: var(--white);
+            padding: 16px;
+            position: relative;
+            min-height: 280px;
+        }
+
+        .matrix-quadrant::before {
+            content: attr(data-label);
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--gray-400);
+            font-weight: 600;
+        }
+
+        .quadrant-1 { background: #f0fdf4; }
+        .quadrant-2 { background: #fefce8; }
+        .quadrant-3 { background: var(--gray-50); }
+        .quadrant-4 { background: #fff7ed; }
+
+        .matrix-x-label {
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-top: 16px;
+        }
+
+        .matrix-item {
+            position: absolute;
+            padding: 10px 14px;
+            background: var(--white);
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--primary);
+            cursor: grab;
+            box-shadow: var(--shadow-md);
+            max-width: 220px;
+            z-index: 10;
+            transition: box-shadow 0.2s ease, transform 0.1s ease;
+            user-select: none;
+        }
+
+        .matrix-item .item-title {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .matrix-item .item-desc {
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: var(--gray-600);
+            line-height: 1.4;
+        }
+
+        .matrix-item:hover {
+            box-shadow: var(--shadow-xl);
+            z-index: 20;
+        }
+
+        .matrix-item.dragging {
+            cursor: grabbing;
+            box-shadow: var(--shadow-xl);
+            transform: scale(1.05);
+            z-index: 100;
+            opacity: 0.9;
+        }
+
+        .matrix-item .item-number {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 4px;
+            text-align: center;
+            line-height: 20px;
+            font-size: 0.7rem;
+            margin-right: 6px;
+        }
+
+        .matrix-item.priority-item {
+            border-color: var(--primary);
+            background: var(--white);
+            position: relative;
+        }
+
+        .matrix-item.priority-item .item-number {
+            background: var(--primary);
+        }
+
+        .matrix-item.priority-item::after {
+            content: '★';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 14px;
+            color: #f59e0b;
+        }
+
+        /* Unassigned items pool */
+        .items-pool {
+            margin-top: 32px;
+            padding: 24px;
+            background: var(--gray-100);
+            border-radius: 12px;
+            border: 2px dashed var(--gray-300);
+        }
+
+        .pool-title {
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+        }
+
+        .pool-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            min-height: 60px;
+            position: relative;
+        }
+
+        .pool-items .matrix-item {
+            position: relative;
+        }
+
+        /* Instructions */
+        .instructions {
+            background: var(--gray-100);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .instructions svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .instructions p {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .use-cases-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .matrix-grid {
+                height: 500px;
+            }
+
+            .matrix-wrapper {
+                flex-direction: column;
+            }
+
+            .matrix-y-label {
+                writing-mode: horizontal-tb;
+                transform: none;
+                padding: 0 0 8px 0;
+            }
+
+            .matrix-item {
+                font-size: 0.7rem;
+                padding: 6px 10px;
+                max-width: 140px;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .use-case-card {
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .use-case-card:nth-child(1) { animation-delay: 0.05s; }
+        .use-case-card:nth-child(2) { animation-delay: 0.1s; }
+        .use-case-card:nth-child(3) { animation-delay: 0.15s; }
+        .use-case-card:nth-child(4) { animation-delay: 0.2s; }
+        .use-case-card:nth-child(5) { animation-delay: 0.25s; }
+        .use-case-card:nth-child(6) { animation-delay: 0.3s; }
+        .use-case-card:nth-child(7) { animation-delay: 0.35s; }
+        .use-case-card:nth-child(8) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Kartlegging av AI-bruksområder</h1>
+            <p class="subtitle">Se oversikt over kartlagte AI-bruksområder for Orkla Foods Kvalitet</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" data-view="overview">Oversikt</button>
+            <button class="tab" data-view="matrix">Prioriteringsmatrise</button>
+        </div>
+
+        <!-- Overview View -->
+        <div id="overview" class="view active">
+            <div class="use-cases-grid">
+                <!-- Use Case 1 -->
+                <div class="use-case-card" data-id="1">
+                    <div class="card-header">
+                        <div class="card-number priority">1</div>
+                        <div class="card-title">Globalt risikobilde for råvarer</div>
+                    </div>
+                    <p class="card-summary">Løpende, kategoribasert risikovurdering av råvarer basert på pålitelige eksterne kilder – med oppdateringer og forslag til tiltak.</p>
+
+                    <div class="card-details">
+                        <div class="detail-section">
+                            <div class="detail-label">Dagens situasjon</div>
+                            <div class="detail-content">Spesialister sammenstiller manuelt informasjon fra ulike kilder. Gjøres kategorivis (f.eks. "tørkede grønnsaker", "tomatpuré"), ofte parallelt på tvers av personer/land.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Risiko / utfordring</div>
+                            <div class="detail-content">
+                                <ul>
+                                    <li>Tid- og kompetansekrevende, risiko for dobbeltarbeid</li>
+                                    <li>Vanskelig å ligge "foran kurven"</li>
+                                    <li>Krever gode kilder og filtrering bort støy</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Ønsket løsning</div>
+                            <div class="detail-content">
+                                <ul>
+                                    <li>Agent som skummer definerte kilder per råvarekategori</li>
+                                    <li>Output som tabell med predefinerte kolonner</li>
+                                    <li>Oppdateringsloop ("hva nytt siden sist")</li>
+                                    <li>Oppdatert risikovurdering + tiltaksliste</li>
+                                    <li>Varsling til ansvarlig per kategori</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Datagrunnlag</div>
+                            <div class="detail-content">
+                                <ul>
+                                    <li>Eksterne kilder: RASFF/Rapid Alert, Mattilsynet m.fl.</li>
+                                    <li>Internt: eksisterende risikovurderinger, råvarekategorisering, historikk</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Output / leveranse</div>
+                            <div class="detail-content">Tabell + kort oppsummering + risikoklassifisering + tiltaksforslag, med kildehenvisninger.</div>
+                        </div>
+                        <div class="assessment-box">
+                            <div class="detail-label">Vurdering av gjennomføring</div>
+                            <div class="detail-content">Vurdering kommer etter nærmere analyse av tekniske forutsetninger, tilgjengelige datakilder og ressursbehov.</div>
+                        </div>
+                    </div>
+                    <button class="expand-btn">
+                        <span>Vis detaljer</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Use Case 2 -->
+                <div class="use-case-card" data-id="2">
+                    <div class="card-header">
+                        <div class="card-number">2</div>
+                        <div class="card-title">Sammenligne råvarespesifikasjon og COA/sertifikat</div>
+                    </div>
+                    <p class="card-summary">Automatisere sammenligning/validering av spesifikasjoner mot analyse-/batchdokumentasjon og tydelig vise avvik.</p>
+
+                    <div class="card-details">
+                        <div class="detail-section">
+                            <div class="detail-label">Dagens situasjon</div>
+                            <div class="detail-content">Manuell sammenligning av korte dokumenter (ofte 1–2 sider), mottatt via e-post/vedlegg og noen ganger papir.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Risiko / utfordring</div>
+                            <div class="detail-content">
+                                <ul>
+                                    <li>Unødvendig tidsbruk på regelstyrt arbeid</li>
+                                    <li>Variasjon i hvordan informasjon mottas</li>
+                                    <li>Behov for tydelige terskler og eskalering</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Ønsket løsning</div>
+                            <div class="detail-content">
+                                <ul>
+                                    <li>Sammenligne spesifikasjon og COA (PDF)</li>
+                                    <li>Kontroll av definerte parametere og terskler</li>
+                                    <li>Avvik flagges og sendes til menneskelig oppfølging</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Datagrunnlag</div>
+                            <div class="detail-content">Råvarespesifikasjoner, COA/analysesertifikater, regelsett for kontroll og eskalering.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Output / leveranse</div>
+                            <div class="detail-content">Avviksrapport + status (OK/Avvik) + anbefalt neste steg.</div>
+                        </div>
+                        <div class="assessment-box">
+                            <div class="detail-label">Vurdering av gjennomføring</div>
+                            <div class="detail-content">Vurdering kommer etter nærmere analyse av tekniske forutsetninger, tilgjengelige datakilder og ressursbehov.</div>
+                        </div>
+                    </div>
+                    <button class="expand-btn">
+                        <span>Vis detaljer</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Use Case 3 -->
+                <div class="use-case-card" data-id="3">
+                    <div class="card-header">
+                        <div class="card-number">3</div>
+                        <div class="card-title">Sertifikater og leverandørgodkjenninger</div>
+                    </div>
+                    <p class="card-summary">Få kontroll på at leverandører er godkjent og at sertifikater er gyldige – med varsling før utløp.</p>
+
+                    <div class="card-details">
+                        <div class="detail-section">
+                            <div class="detail-label">Dagens situasjon</div>
+                            <div class="detail-content">Oppfølging skjer delvis manuelt og ustrukturert. Sertifikater ligger spredt i ulike systemer.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Risiko / utfordring</div>
+                            <div class="detail-content">
+                                <ul>
+                                    <li>Sertifikater kan utløpe uten at det fanges opp</li>
+                                    <li>Fragmentert datalandskap</li>
+                                    <li>Noe info vanskelig tilgjengelig (paywalls)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Ønsket løsning</div>
+                            <div class="detail-content">
+                                <ul>
+                                    <li>Varsling ved utløp</li>
+                                    <li>Oversikt per leverandør (status, sist bekreftet)</li>
+                                    <li>På sikt: deteksjon av endringer i sertifisering</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Datagrunnlag</div>
+                            <div class="detail-content">Leverandørregister / supply-portal, sertifikatdokumenter og metadata, definisjon av krav per råvare/leverandør.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Output / leveranse</div>
+                            <div class="detail-content">Varsler + oversikt/dashboard + avviksliste.</div>
+                        </div>
+                        <div class="assessment-box">
+                            <div class="detail-label">Vurdering av gjennomføring</div>
+                            <div class="detail-content">Vurdering kommer etter nærmere analyse av tekniske forutsetninger, tilgjengelige datakilder og ressursbehov.</div>
+                        </div>
+                    </div>
+                    <button class="expand-btn">
+                        <span>Vis detaljer</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Use Case 4 -->
+                <div class="use-case-card" data-id="4">
+                    <div class="card-header">
+                        <div class="card-number">4</div>
+                        <div class="card-title">Rotårsaksanalyse-agent</div>
+                    </div>
+                    <p class="card-summary">Støtte rotårsaksanalyser ved å foreslå relevante sjekkpunkter basert på historiske avvik.</p>
+
+                    <div class="card-details">
+                        <div class="detail-section">
+                            <div class="detail-label">Dagens situasjon</div>
+                            <div class="detail-content">Rotårsaksanalyser gjøres manuelt, med varierende gjenbruk av historikk.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Risiko / utfordring</div>
+                            <div class="detail-content">
+                                <ul>
+                                    <li>Avhengig av tilstrekkelig og relevant historikk</li>
+                                    <li>Risiko for generiske råd uten godt datagrunnlag</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Ønsket løsning</div>
+                            <div class="detail-content">
+                                <ul>
+                                    <li>Bruker beskriver avvik</li>
+                                    <li>Agent foreslår hva som bør undersøkes videre</li>
+                                    <li>Feedback-loop for kontinuerlig forbedring</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Datagrunnlag</div>
+                            <div class="detail-content">Avviksrapporter og tidligere rotårsaksanalyser, produksjonslinje-/produktkontekst.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Output / leveranse</div>
+                            <div class="detail-content">Forslag til sjekkpunkter + referanser til lignende saker.</div>
+                        </div>
+                        <div class="assessment-box">
+                            <div class="detail-label">Vurdering av gjennomføring</div>
+                            <div class="detail-content">Vurdering kommer etter nærmere analyse av tekniske forutsetninger, tilgjengelige datakilder og ressursbehov.</div>
+                        </div>
+                    </div>
+                    <button class="expand-btn">
+                        <span>Vis detaljer</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Use Case 5 -->
+                <div class="use-case-card" data-id="5">
+                    <div class="card-header">
+                        <div class="card-number">5</div>
+                        <div class="card-title">Leverandøraudits og compliance-vurdering</div>
+                    </div>
+                    <p class="card-summary">Raskere og bedre forberedelse til audit gjennom AI-basert gjennomgang av dokumentpakker.</p>
+
+                    <div class="card-details">
+                        <div class="detail-section">
+                            <div class="detail-label">Dagens situasjon</div>
+                            <div class="detail-content">Store dokumentpakker leses manuelt, ofte på lokalt språk.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Risiko / utfordring</div>
+                            <div class="detail-content">
+                                <ul>
+                                    <li>Språkbarrierer</li>
+                                    <li>Tidkrevende forarbeid</li>
+                                    <li>Vanskelig å identifisere reelle risikoområder tidlig</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Ønsket løsning</div>
+                            <div class="detail-content">
+                                <ul>
+                                    <li>Oppsummering av dokumentpakker</li>
+                                    <li>Identifisering av svakheter og fokusområder</li>
+                                    <li>Mulig kobling til intern historikk (reklamasjoner)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Datagrunnlag</div>
+                            <div class="detail-content">Dokumentpakker (PDF/Word), interne reklamasjoner og auditdata, definerte compliance-kriterier.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Output / leveranse</div>
+                            <div class="detail-content">Audit-brief med risikopunkter og anbefalte fokusområder.</div>
+                        </div>
+                        <div class="assessment-box">
+                            <div class="detail-label">Vurdering av gjennomføring</div>
+                            <div class="detail-content">Vurdering kommer etter nærmere analyse av tekniske forutsetninger, tilgjengelige datakilder og ressursbehov.</div>
+                        </div>
+                    </div>
+                    <button class="expand-btn">
+                        <span>Vis detaljer</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Use Case 6 -->
+                <div class="use-case-card" data-id="6">
+                    <div class="card-header">
+                        <div class="card-number">6</div>
+                        <div class="card-title">Artwork/print-kontroll mot manusmal</div>
+                    </div>
+                    <p class="card-summary">Unngå feilmerking ved å sammenligne etikett/artwork mot godkjent manus. Nulltoleranse for feil.</p>
+
+                    <div class="card-details">
+                        <div class="detail-section">
+                            <div class="detail-label">Dagens situasjon</div>
+                            <div class="detail-content">Manuell kontroll av manus (Word) mot design/proof (PDF).</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Risiko / utfordring</div>
+                            <div class="detail-content">
+                                <ul>
+                                    <li>Tilbakekalling ved feil ingrediens-/påstandsinformasjon</li>
+                                    <li>Menneskelige feil i kritiske kontroller</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Ønsket løsning</div>
+                            <div class="detail-content">
+                                <ul>
+                                    <li>Sammenligne manusmal og artwork/proof</li>
+                                    <li>Fokus på kritiske felter (ingredienser, allergener, påstander)</li>
+                                    <li>Tydelig avvikshåndtering</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Datagrunnlag</div>
+                            <div class="detail-content">Manusmaler, artwork/proof-filer, regler for kritiske felter.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Output / leveranse</div>
+                            <div class="detail-content">Avviksliste + beslutningsgrunnlag for godkjenning.</div>
+                        </div>
+                        <div class="assessment-box">
+                            <div class="detail-label">Vurdering av gjennomføring</div>
+                            <div class="detail-content">Vurdering kommer etter nærmere analyse av tekniske forutsetninger, tilgjengelige datakilder og ressursbehov.</div>
+                        </div>
+                    </div>
+                    <button class="expand-btn">
+                        <span>Vis detaljer</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Use Case 7 -->
+                <div class="use-case-card" data-id="7">
+                    <div class="card-header">
+                        <div class="card-number">7</div>
+                        <div class="card-title">Trendanalyse på data</div>
+                    </div>
+                    <p class="card-summary">Identifisere trender og avvik i store datamengder og gi beslutningsstøtte.</p>
+
+                    <div class="card-details">
+                        <div class="detail-section">
+                            <div class="detail-label">Dagens situasjon</div>
+                            <div class="detail-content">Analyser gjøres delvis manuelt og ad hoc.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Risiko / utfordring</div>
+                            <div class="detail-content">
+                                <ul>
+                                    <li>Vanskelig å se mønstre tidlig</li>
+                                    <li>Risiko for støy uten klare terskler</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Ønsket løsning</div>
+                            <div class="detail-content">
+                                <ul>
+                                    <li>Trendrapporter per kategori/produkt/region</li>
+                                    <li>Varsling ved avvik</li>
+                                    <li>Forklaringslag der det er mulig</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Datagrunnlag</div>
+                            <div class="detail-content">Kvalitets-, avviks-, produksjons- og innkjøpsdata, definerte KPI-er og terskler.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Output / leveranse</div>
+                            <div class="detail-content">Trendrapporter + varsler + anbefalte oppfølginger.</div>
+                        </div>
+                        <div class="assessment-box">
+                            <div class="detail-label">Vurdering av gjennomføring</div>
+                            <div class="detail-content">Vurdering kommer etter nærmere analyse av tekniske forutsetninger, tilgjengelige datakilder og ressursbehov.</div>
+                        </div>
+                    </div>
+                    <button class="expand-btn">
+                        <span>Vis detaljer</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Use Case 8 -->
+                <div class="use-case-card" data-id="8">
+                    <div class="card-header">
+                        <div class="card-number">8</div>
+                        <div class="card-title">Forbrukerklager i Dynamics</div>
+                    </div>
+                    <p class="card-summary">Tidlig varsling og bedre innsikt i forbrukerklager på tvers av produkter og land.</p>
+
+                    <div class="card-details">
+                        <div class="detail-section">
+                            <div class="detail-label">Dagens situasjon</div>
+                            <div class="detail-content">Klager logges i Dynamics. Ikke full "social listening", men produktknyttede saker.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Risiko / utfordring</div>
+                            <div class="detail-content">
+                                <ul>
+                                    <li>Støy i datagrunnlaget</li>
+                                    <li>Språkbarrierer</li>
+                                    <li>Vanskelig å oppdage volumendringer raskt</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Ønsket løsning</div>
+                            <div class="detail-content">
+                                <ul>
+                                    <li>Automatisk kategorisering av klager</li>
+                                    <li>Varsling ved unormale økninger</li>
+                                    <li>Språkvisning/oversettelse for sentral overvåking</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Datagrunnlag</div>
+                            <div class="detail-content">Dynamics-klager, produkt- og artikkeldata, historikk for normalnivå per produkt.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Output / leveranse</div>
+                            <div class="detail-content">Varsler + oversikt per produkt/tema/land + grunnlag for videre tiltak.</div>
+                        </div>
+                        <div class="assessment-box">
+                            <div class="detail-label">Vurdering av gjennomføring</div>
+                            <div class="detail-content">Vurdering kommer etter nærmere analyse av tekniske forutsetninger, tilgjengelige datakilder og ressursbehov.</div>
+                        </div>
+                    </div>
+                    <button class="expand-btn">
+                        <span>Vis detaljer</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matrix View -->
+        <div id="matrix" class="view">
+
+            <div class="matrix-container">
+                <div class="matrix-header">
+                    <h2 class="matrix-title">Prioriteringsmatrise</h2>
+                    <div class="matrix-header-right">
+                        <div class="matrix-legend">
+                            <div class="legend-item">
+                                <span style="color: #f59e0b; font-size: 14px;">★</span>
+                                <span>Topp-prioritet</span>
+                            </div>
+                        </div>
+                        <button class="reset-btn" id="resetMatrix">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Nullstill
+                        </button>
+                    </div>
+                </div>
+
+                <div class="matrix-wrapper">
+                    <div class="matrix-y-label">Verdi / Effekt →</div>
+                    <div class="matrix-main">
+                        <div class="matrix-grid" id="matrixGrid">
+                            <div class="matrix-quadrant quadrant-1" data-label="🍎 Lavthengende frukter" data-quadrant="1"></div>
+                            <div class="matrix-quadrant quadrant-2" data-label="🎯 Strategiske initiativ" data-quadrant="2"></div>
+                            <div class="matrix-quadrant quadrant-3" data-label="📝 Verdt å skrive ned" data-quadrant="3"></div>
+                            <div class="matrix-quadrant quadrant-4" data-label="🗑️ Bare å droppe" data-quadrant="4"></div>
+                        </div>
+                        <div class="matrix-x-label">Kompleksitet / Innsats →</div>
+                    </div>
+                </div>
+
+                <div class="items-pool" id="itemsPool">
+                    <div class="pool-title">Dra use-cases herfra inn i matrisen:</div>
+                    <div class="pool-items" id="poolItems">
+                        <div class="matrix-item priority-item" data-id="1" draggable="true">
+                            <div class="item-title"><span class="item-number">1</span>Globalt risikobilde</div>
+                            <div class="item-desc">Løpende risikovurdering av råvarer med oppdateringer og tiltaksforslag</div>
+                        </div>
+                        <div class="matrix-item" data-id="2" draggable="true">
+                            <div class="item-title"><span class="item-number">2</span>Råvarespek vs COA</div>
+                            <div class="item-desc">Automatisk sammenligning av spesifikasjoner mot analysedokumentasjon</div>
+                        </div>
+                        <div class="matrix-item" data-id="3" draggable="true">
+                            <div class="item-title"><span class="item-number">3</span>Sertifikater/godkj.</div>
+                            <div class="item-desc">Kontroll på leverandørgodkjenninger med varsling før utløp</div>
+                        </div>
+                        <div class="matrix-item" data-id="4" draggable="true">
+                            <div class="item-title"><span class="item-number">4</span>Rotårsaksanalyse</div>
+                            <div class="item-desc">Foreslå sjekkpunkter basert på historiske avvik</div>
+                        </div>
+                        <div class="matrix-item" data-id="5" draggable="true">
+                            <div class="item-title"><span class="item-number">5</span>Leverandøraudits</div>
+                            <div class="item-desc">AI-basert gjennomgang av dokumentpakker for audit-forberedelse</div>
+                        </div>
+                        <div class="matrix-item" data-id="6" draggable="true">
+                            <div class="item-title"><span class="item-number">6</span>Artwork-kontroll</div>
+                            <div class="item-desc">Sammenligne etikett/artwork mot godkjent manus</div>
+                        </div>
+                        <div class="matrix-item" data-id="7" draggable="true">
+                            <div class="item-title"><span class="item-number">7</span>Trendanalyse</div>
+                            <div class="item-desc">Identifisere trender og avvik i store datamengder</div>
+                        </div>
+                        <div class="matrix-item" data-id="8" draggable="true">
+                            <div class="item-title"><span class="item-number">8</span>Forbrukerklager</div>
+                            <div class="item-desc">Tidlig varsling og innsikt i klager på tvers av produkter og land</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="instructions">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p><strong>Dra og slipp</strong> use-casene for å plassere dem i matrisen. Du kan plassere dem fritt – også med overlapp mellom kvadranter.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.view).classList.add('active');
+            });
+        });
+
+        // Expand/collapse cards
+        document.querySelectorAll('.use-case-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.expand-btn')) {
+                    card.classList.toggle('expanded');
+                    const btn = card.querySelector('.expand-btn span');
+                    btn.textContent = card.classList.contains('expanded') ? 'Skjul detaljer' : 'Vis detaljer';
+                }
+            });
+        });
+
+        // Drag and drop functionality
+        let draggedItem = null;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        document.querySelectorAll('.matrix-item').forEach(item => {
+            item.addEventListener('mousedown', startDrag);
+            item.addEventListener('touchstart', startDrag, { passive: false });
+        });
+
+        function startDrag(e) {
+            e.preventDefault();
+            draggedItem = this;
+            draggedItem.classList.add('dragging');
+            
+            const rect = draggedItem.getBoundingClientRect();
+            const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+            
+            offsetX = clientX - rect.left;
+            offsetY = clientY - rect.top;
+
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('touchmove', drag, { passive: false });
+            document.addEventListener('mouseup', endDrag);
+            document.addEventListener('touchend', endDrag);
+        }
+
+        function drag(e) {
+            if (!draggedItem) return;
+            e.preventDefault();
+            
+            const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+
+            draggedItem.style.position = 'fixed';
+            draggedItem.style.left = (clientX - offsetX) + 'px';
+            draggedItem.style.top = (clientY - offsetY) + 'px';
+            draggedItem.style.zIndex = '1000';
+        }
+
+        function endDrag(e) {
+            if (!draggedItem) return;
+            
+            const clientX = e.type === 'touchend' ? e.changedTouches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchend' ? e.changedTouches[0].clientY : e.clientY;
+
+            draggedItem.classList.remove('dragging');
+            
+            const matrixGrid = document.getElementById('matrixGrid');
+            const poolItems = document.getElementById('poolItems');
+            const matrixRect = matrixGrid.getBoundingClientRect();
+            const poolRect = poolItems.getBoundingClientRect();
+
+            // Check if dropped on matrix
+            if (clientX >= matrixRect.left && clientX <= matrixRect.right &&
+                clientY >= matrixRect.top && clientY <= matrixRect.bottom) {
+                
+                // Position relative to the grid
+                const relX = clientX - matrixRect.left - offsetX;
+                const relY = clientY - matrixRect.top - offsetY;
+                
+                // Move to matrix grid
+                matrixGrid.appendChild(draggedItem);
+                draggedItem.style.position = 'absolute';
+                draggedItem.style.left = Math.max(0, Math.min(relX, matrixRect.width - draggedItem.offsetWidth)) + 'px';
+                draggedItem.style.top = Math.max(0, Math.min(relY, matrixRect.height - draggedItem.offsetHeight)) + 'px';
+                draggedItem.style.zIndex = '10';
+            } 
+            // Check if dropped on pool
+            else if (clientX >= poolRect.left && clientX <= poolRect.right &&
+                     clientY >= poolRect.top && clientY <= poolRect.bottom) {
+                returnToPool(draggedItem);
+            }
+            // If dropped outside both, return to pool
+            else {
+                // Check if item was already in matrix
+                if (draggedItem.parentElement === matrixGrid) {
+                    // Keep it in matrix but reset position
+                    draggedItem.style.position = 'absolute';
+                    draggedItem.style.zIndex = '10';
+                } else {
+                    returnToPool(draggedItem);
+                }
+            }
+
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('touchmove', drag);
+            document.removeEventListener('mouseup', endDrag);
+            document.removeEventListener('touchend', endDrag);
+            
+            draggedItem = null;
+        }
+
+        function returnToPool(item) {
+            const poolItems = document.getElementById('poolItems');
+            poolItems.appendChild(item);
+            item.style.position = 'relative';
+            item.style.left = '';
+            item.style.top = '';
+            item.style.zIndex = '';
+        }
+
+        // Reset matrix functionality
+        document.getElementById('resetMatrix').addEventListener('click', () => {
+            const matrixItems = document.querySelectorAll('.matrix-item');
+            matrixItems.forEach(item => {
+                returnToPool(item);
+            });
+        });
+    </script>
+</body>
+</html>
